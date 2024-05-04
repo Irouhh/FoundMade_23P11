@@ -7,19 +7,18 @@ from aiogram.types import Message, BotCommand, KeyboardButton, ReplyKeyboardMark
     InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 from aiogram.filters import Command, StateFilter
 from keyboards.anketa import kb_cancel_btn, kb_cancel_back_btn, start_anketa_btn
+from states.stateanketa import Anketa
 
 bot = Bot(token='7051141307:AAHLYtGeFpBTUdAKtI9dKBbmi3QP2uPqtus')
 dp = Dispatcher()
 router = Router()
 
-class Anketa(StatesGroup):
-    nickname = State()
-    age = State()
-
 @router.message(Command('start'))
 async def start_handler(msg: Message):
     """Обработка команды start"""
-    await msg.answer('Привет, заполни анкету', reply_markup=start_anketa_btn)
+    await msg.answer('Привет 👋')
+    await msg.answer('С помощью этого Бота ты можешь найти тебе партнера для любой игры🎮')                 
+    await msg.answer('Заполняй анкету и собирай свою команду 😇🥰', reply_markup=start_anketa_btn)
     await msg.delete()
 
 
@@ -50,7 +49,10 @@ async def back_anketa_handler(callback_query: CallbackQuery, state: FSMContext):
     current_state = await state.get_state()
     if current_state == Anketa.age:
         await state.set_state(Anketa.nickname)
-        await callback_query.message.answer('Введите ваше имя', reply_markup=kb_cancel_btn)
+        await callback_query.message.edit_text('Введите ваше имя', reply_markup=kb_cancel_btn)
+    elif current_state == Anketa.about:
+        await state.set_state(Anketa.age)
+        await callback_query.message.edit_text('Введите ваш возраст', reply_markup=kb_cancel_btn)
 
 
 @router.message (Anketa.age)
@@ -62,6 +64,13 @@ async def set_age_by_anketa_handler(msg: Message, state: FSMContext):
         await msg.answer('Вы не верно ввели возраст!')
         await msg.answer('Введите ваш возраст', reply_markup=kb_cancel_back_btn)
         return
+    await state.set_state(Anketa.about)
+    await msg.answer('Во что ты хочешь поиграть?',reply_markup=kb_cancel_back_btn)
+    
+@router.message (Anketa.about)
+async def set_about_by_anketa_handler(msg: Message, state: FSMContext):
+    """Обрабатывает вводимую инфу о юзере"""
+    await state.update_data(about = msg.text)
     await msg.answer('Анкета успешно заполнена!')
     await msg.answer(str(await state.get_data()))
 
