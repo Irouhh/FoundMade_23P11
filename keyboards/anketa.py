@@ -19,4 +19,14 @@ start_anketa_btn = InlineKeyboardMarkup(inline_keyboard=[
     [
         InlineKeyboardButton(
             text='Заполнить анкету',
-            callback_data= 'start_anketa_btn')]])
+            callback_data= 'start_anketa_btn'),
+    
+        InlineKeyboardButton(
+            text='Быстрый поиск',
+            callback_data='fast_find_btn')]])
+
+say_choise_game_btn = InlineKeyboardMarkup(inline_keyboard=[
+    [
+        InlineKeyboardButton(
+            text='Выбрать игру',
+            callback_data='choice_game')]])

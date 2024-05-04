@@ -6,7 +6,8 @@ from aiogram import Bot, Dispatcher, Router, F, types
 from aiogram.types import Message, BotCommand, KeyboardButton, ReplyKeyboardMarkup, \
     InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 from aiogram.filters import Command, StateFilter
-from keyboards.anketa import kb_cancel_btn, kb_cancel_back_btn, start_anketa_btn
+from keyboards.anketa import kb_cancel_btn, kb_cancel_back_btn, start_anketa_btn, say_choise_game_btn
+from keyboards.games import keyboard_zhanr
 from states.stateanketa import Anketa
 
 bot = Bot(token='7051141307:AAHLYtGeFpBTUdAKtI9dKBbmi3QP2uPqtus')
@@ -18,7 +19,7 @@ async def start_handler(msg: Message):
     """Обработка команды start"""
     await msg.answer('Привет 👋')
     await msg.answer('С помощью этого Бота ты можешь найти тебе партнера для любой игры🎮')                 
-    await msg.answer('Заполняй анкету и собирай свою команду 😇🥰', reply_markup=start_anketa_btn)
+    await msg.answer('Заполняй анкету и собирай свою команду 😇🥰\nТак же ты можешь воспользоваться быстрым поиском😉', reply_markup=start_anketa_btn)
     await msg.delete()
 
 
@@ -74,6 +75,19 @@ async def set_about_by_anketa_handler(msg: Message, state: FSMContext):
     await msg.answer('Анкета успешно заполнена!')
     await msg.answer(str(await state.get_data()))
 
+
+
+@router.callback_query(F.data == 'fast_find_btn')
+async def func_fast_find(callback_query: CallbackQuery):
+    """Обрабатывает нажатие кнопки быстрый поиск"""
+    await callback_query.message.answer('Вы выбираете игру в которую вы хотите поиграть -> Находите себе тиммейта', reply_markup=say_choise_game_btn)
+
+@router.callback_query(F.data == 'choice_game')
+async def func_choice_game(callback_query: CallbackQuery):
+    """Обрабатывает нажатие кнопки выбрать игру"""
+    await callback_query.message.answer('Выберите жанр', reply_markup=keyboard_zhanr)
+
+    
 
 
 
